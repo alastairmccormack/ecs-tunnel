@@ -1,0 +1,17 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+boto3 = "*"
+pexpect = "*"
+click = "*"
+jmespath = "*"
+
+[dev-packages]
+moto = {extras = ["ssm"], version = "*"}
+python-dotenv = "*"
+
+[requires]
+python_version = "3.9"
