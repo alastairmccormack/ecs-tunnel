@@ -1,2 +1,3 @@
 /.env
 /ecs_tunnel.egg-info/
+**/__pycache__
