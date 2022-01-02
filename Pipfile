@@ -12,6 +12,8 @@ jmespath = "*"
 [dev-packages]
 moto = {extras = ["ssm"], version = "*"}
 python-dotenv = "*"
+build = "*"
+twine = "*"
 
 [requires]
 python_version = "3.9"
