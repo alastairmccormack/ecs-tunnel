@@ -109,8 +109,6 @@ def cli(cluster, task, container, local, http_proxy, region, profile, aws_exec, 
     try:
         while True:
             pass
-    except:
-        pass
     finally:
         et.close()
 

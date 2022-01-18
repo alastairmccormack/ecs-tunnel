@@ -1,13 +1,14 @@
+import errno
 import json
 import logging
 import os
 import random
 import shutil
+import socket
 import typing
-import socket, errno
 
-import jmespath
 import boto3
+import jmespath
 import pexpect
 import pexpect.exceptions
 
@@ -94,8 +95,8 @@ class EcsTunnel:
 
         return f'ecs:{self.cluster_id}_{self.task_id}_{container_runtime_id}'
 
-    def _get_env(self) -> typing.Dict[str, str]:
-        aws_env: typing.Dict[str, str] = os.environ
+    def _get_env(self):
+        aws_env = os.environ
 
         if self._aws_profile_name:
             aws_env['AWS_DEFAULT_PROFILE'] = self._aws_profile_name
@@ -156,10 +157,10 @@ class EcsTunnel:
             return candidate_port
 
     def local_port_tunnel(self, remote_port: int, local_port: int = None) -> int:
-        ''' Tunnel a local port to a local port on the remote instance
+        """ Tunnel a local port to a local port on the remote instance
 
         :return the local port
-        '''
+        """
 
         local_port = self._get_port(local_port, check_in_use=True)
 
@@ -235,24 +236,24 @@ class EcsTunnel:
         child = pexpect.spawn(command=self._resolved_aws_cli_exec, args=aws_cmd, env=self._get_env())
 
     def close(self):
-        try:
-            self._logger.debug('Trying to kill running exec sessions')
-            for exec_session in self._ecs_exec_sessions:
-                session_id = jmespath.search('session.sessionId', exec_session)
-                if session_id:
-                    self._logger.debug(f'Terminating SSM session: {session_id}')
-                    self._ssm_client.terminate_session(SessionId=session_id)
-            self._ecs_exec_sessions = []
+        self._logger.debug('Trying to kill running exec sessions')
+        for exec_session in self._ecs_exec_sessions:
+            session_id = jmespath.search('session.sessionId', exec_session)
+            if session_id:
+                self._logger.debug(f'Terminating SSM session: {session_id}')
+                self._ssm_client.terminate_session(SessionId=session_id)
+        self._ecs_exec_sessions = []
 
-            self._logger.debug('Trying to kill running session-managers')
-            for proc in self._port_fw_procs:
-                if proc.isalive():
-                    self._logger.debug(f'Killing AWS session-manager-plugin: {proc.pid}')
-                    proc.kill()
-            self._port_fw_procs = []
-
-        except:
-            pass
+        self._logger.debug('Trying to kill running session-managers')
+        for proc in self._port_fw_procs:
+            if proc.isalive():
+                self._logger.debug(f'Killing AWS session-manager-plugin: {proc.pid}')
+                proc.kill()
+        self._port_fw_procs = []
 
     def __del__(self):
-        self.close()
+        # noinspection PyBroadException
+        try:
+            self.close()
+        except BaseException:
+            pass
