@@ -1,6 +1,7 @@
 import logging
 import re
 import sys
+import time
 
 import click
 
@@ -108,9 +109,7 @@ def cli(cluster, task, container, local, http_proxy, region, profile, aws_exec, 
 
     try:
         while True:
-            pass
-    except:
-        pass
+            time.sleep(0.1)
     finally:
         et.close()
 
