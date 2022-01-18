@@ -248,7 +248,7 @@ class EcsTunnel:
         for proc in self._port_fw_procs:
             if proc.isalive():
                 self._logger.debug(f'Killing AWS session-manager-plugin: {proc.pid}')
-                proc.kill()
+                proc.terminate()
         self._port_fw_procs = []
 
     def __del__(self):
