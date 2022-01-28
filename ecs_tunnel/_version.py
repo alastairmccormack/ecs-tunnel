@@ -1,3 +1,6 @@
 import importlib.metadata
 
-VERSION = importlib.metadata.version('wheel')
+try:
+    VERSION = importlib.metadata.version('ecs-tunnel')
+except importlib.metadata.PackageNotFoundError:
+    VERSION = 'develop'
