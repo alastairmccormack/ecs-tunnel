@@ -223,18 +223,6 @@ class EcsTunnel:
 
         return self.local_port_tunnel(local_port=local_port, remote_port=remote_port)
 
-    def remote_port_tunnel_pexpect(self, remote_port: int, remote_host: str, local_port=None):
-
-        aws_cmd = {
-            'execute-command',
-            '--cluster', self.cluster_id,
-            '--command', '/usr/bin/bash',
-            '--interactive',
-            '--task', self.task_id
-        }
-
-        child = pexpect.spawn(command=self._resolved_aws_cli_exec, args=aws_cmd, env=self._get_env())
-
     def close(self):
         self._logger.debug('Trying to kill running exec sessions')
         for exec_session in self._ecs_exec_sessions:
