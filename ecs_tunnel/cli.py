@@ -80,9 +80,12 @@ REMOTE_ADDR is optional. If given, netcat is required on the connected task. Req
 @click.option(
     '--aws-exec', metavar='BIN', help='aws command line executable. (default: "aws")', default='aws'
 )
+@click.option(
+    '--remote-port-netcat-exec', metavar='REMOTE_PORT_NETCAT_EXEC', help='Remote port netcat command line executable. (default: "nc")', default='nc'
+)
 @click.option('--verbose', is_flag=True, default=False)
 @click.version_option(version=VERSION)
-def cli(cluster, task, container, local, http_proxy, region, profile, aws_exec, verbose):
+def cli(cluster, task, container, local, http_proxy, region, profile, aws_exec, remote_port_netcat_exec, verbose):
     action = False
 
     if verbose:
@@ -90,7 +93,7 @@ def cli(cluster, task, container, local, http_proxy, region, profile, aws_exec, 
 
     et = EcsTunnel(
         cluster_id=cluster, task_id=task, container_name=container, aws_profile_name=profile, aws_region_name=region,
-        aws_cli_exec=aws_exec
+        aws_cli_exec=aws_exec, remote_port_netcat_exec=remote_port_netcat_exec
     )
 
     for lp in local:

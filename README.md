@@ -64,6 +64,9 @@ Options:
   --profile AWS_PROFILE_NAME
   --aws-exec BIN                  aws command line executable. (default:
                                   "aws")
+  --remote-port-netcat-exec REMOTE_PORT_NETCAT_EXEC
+                                  Remote port netcat command line executable.
+                                  (default: "nc")
   --verbose
   --version                       Show the version and exit.
   --help                          Show this message and exit.
