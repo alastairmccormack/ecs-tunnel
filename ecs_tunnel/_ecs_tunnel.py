@@ -22,6 +22,7 @@ class EcsTunnel:
     task_id: str
     container_name: typing.Optional[str]
     aws_cli_exec: str
+    remote_port_netcat_exec: str
 
     def __init__(
             self,
@@ -34,6 +35,7 @@ class EcsTunnel:
             aws_session_token: str = None,
             aws_region_name: str = None,
             aws_profile_name: str = None,
+            remote_port_netcat_exec: str = 'nc',
 
     ):
         self.cluster_id = cluster_id
@@ -41,6 +43,7 @@ class EcsTunnel:
         self.container_name = container_name
 
         self.aws_cli_exec = aws_cli_exec
+        self.remote_port_netcat_exec = remote_port_netcat_exec
 
         self._logger = logging.getLogger('ecs_tunnel')
 
@@ -209,7 +212,7 @@ class EcsTunnel:
         # TODO: check in use
         proxy_port = self._get_port()
 
-        netcat_cmd = f'nc -lk -p {proxy_port} -e nc {remote_host} {remote_port}'
+        netcat_cmd = f'{self.remote_port_netcat_exec} -lk -p {proxy_port} -e "{self.remote_port_netcat_exec} {remote_host} {remote_port}"'
         self._run_remote_ecs_cmd(cmd=netcat_cmd)
 
         return self.local_port_tunnel(local_port=local_port, remote_port=proxy_port)
@@ -222,18 +225,6 @@ class EcsTunnel:
         self._run_remote_ecs_cmd(cmd=ncat_cmd)
 
         return self.local_port_tunnel(local_port=local_port, remote_port=remote_port)
-
-    def remote_port_tunnel_pexpect(self, remote_port: int, remote_host: str, local_port=None):
-
-        aws_cmd = {
-            'execute-command',
-            '--cluster', self.cluster_id,
-            '--command', '/usr/bin/bash',
-            '--interactive',
-            '--task', self.task_id
-        }
-
-        child = pexpect.spawn(command=self._resolved_aws_cli_exec, args=aws_cmd, env=self._get_env())
 
     def close(self):
         self._logger.debug('Trying to kill running exec sessions')
