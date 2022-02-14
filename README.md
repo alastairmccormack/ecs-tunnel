@@ -86,16 +86,16 @@ ecs-tunnel -L 5432:my-db-cluster:5432 -c my-cluster -t 7e2c99a9c63eb1fc3949d9e96
 
 Setup HTTP proxy on port 8888:
 ```
-ecs-tunnel -D 8888 -c my-cluster -t 7e2c99a9c63eb1fc3949d9e966d91f3b
+ecs-tunnel -H 8888 -c my-cluster -t 7e2c99a9c63eb1fc3949d9e966d91f3b
 ```
 
 
 ## But How?
 
 Port forwarding to a port on an EC2 node is currently supported and documented using AWS Systems Manager,
- AWS Session Manager Plugin and the `aws session` command. 
-By observing how `aws ecs execute-command` also used the AWS Session Manager, and taking insperation from SSH 
-port forwarding, it was possible to write a quick wrapper that used the EC2 port forwarding profile with 
+ AWS Session Manager Plugin and the `aws session` command.
+By observing how `aws ecs execute-command` also used the AWS Session Manager, and taking insperation from SSH
+port forwarding, it was possible to write a quick wrapper that used the EC2 port forwarding profile with
 ECS tasks.
 
 Unfortunately, the AWS Systems Manager doesn't seem to expose a way of forwading a local port to a remote
@@ -104,4 +104,4 @@ port via the connected task. Instead, we use compatible versions of netcat to pr
 ## Todo
 
 - Check for remote netcat support
-- Implement native Python session-manager using websockets 
+- Implement native Python session-manager using websockets
