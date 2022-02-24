@@ -212,7 +212,7 @@ class EcsTunnel:
         # TODO: check in use
         proxy_port = self._get_port()
 
-        netcat_cmd = f'{self.remote_port_netcat_exec} -lk -p {proxy_port} -e "{self.remote_port_netcat_exec} {remote_host} {remote_port}"'
+        netcat_cmd = f'{self.remote_port_netcat_exec} -lk -p {proxy_port} -e {self.remote_port_netcat_exec} {remote_host} {remote_port}'
         self._run_remote_ecs_cmd(cmd=netcat_cmd)
 
         return self.local_port_tunnel(local_port=local_port, remote_port=proxy_port)
