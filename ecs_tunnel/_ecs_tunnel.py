@@ -87,7 +87,7 @@ class EcsTunnel:
 
         if self.container_name:
             container_runtime_id = jmespath.search(
-                f"tasks[0].containers[?name = '{self.container_name}'].runtimeId",
+                f"tasks[0].containers[?name == '{self.container_name}'].runtimeId | [0]",
                 response
             )
         else:
