@@ -9,7 +9,7 @@ import typing
 
 import boto3
 import jmespath
-import pexpect
+from pexpect.popen_spawn import PopenSpawn
 import pexpect.exceptions
 
 
@@ -65,7 +65,7 @@ class EcsTunnel:
 
         self._ssm_target_id = self._get_task_id()
 
-        self._port_fw_procs: typing.List[pexpect.spawn] = []
+        self._port_fw_procs: typing.List[PopenSpawn] = []
         self._ecs_exec_sessions: typing.List[dict] = []
 
         # See warning in https://docs.python.org/3/library/subprocess.html#popen-constructor
@@ -171,7 +171,7 @@ class EcsTunnel:
 
         self._logger.debug(f'AWS CLI start session cmd: {self._resolved_aws_cli_exec} {" ".join(aws_cmd)}')
 
-        child = pexpect.spawn(command=self._resolved_aws_cli_exec, args=aws_cmd, env=self._get_env())
+        child = PopenSpawn(cmd=[self._resolved_aws_cli_exec] + aws_cmd, env=self._get_env())
 
         try:
             child.expect('Waiting for connections')
@@ -237,9 +237,11 @@ class EcsTunnel:
 
         self._logger.debug('Trying to kill running session-managers')
         for proc in self._port_fw_procs:
-            if proc.isalive():
-                self._logger.debug(f'Killing AWS session-manager-plugin: {proc.pid}')
+            self._logger.debug(f'Killing AWS session-manager-plugin: {proc.pid}')
+            try:
                 proc.terminate()
+            except:
+                pass
         self._port_fw_procs = []
 
     def __del__(self):
